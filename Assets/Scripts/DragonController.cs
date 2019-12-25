@@ -30,4 +30,8 @@ public class DragonController : MonoBehaviour
     }
 
     public void Move(InputAction.CallbackContext context) => movementInput = context.ReadValue<Vector2>();
+
+    public void Fire(InputAction.CallbackContext context) {
+        
+    }
 }
