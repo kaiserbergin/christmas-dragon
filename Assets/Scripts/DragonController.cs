@@ -6,9 +6,13 @@ using UnityEngine.InputSystem;
 
 public class DragonController : MonoBehaviour
 {
-    private Animator _animator;
+    [SerializeField]
+    private float _speed = 1.0f;
 
-    private Vector2 movementInput;
+    private Animator _animator;
+    private Vector2 _movementInput;
+    private bool _fireInput;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -25,13 +29,20 @@ public class DragonController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float horizontalInput = movementInput.x;
-        float verticalInput = movementInput.y;
+        float xAxisInput = _movementInput.x;
+        float yAxisInput = _movementInput.y;
+
+        if (xAxisInput != 0 || yAxisInput != 0)
+        {
+            Debug.Log("horizontalInput: " + xAxisInput);
+            Debug.Log("verticalInput: " + yAxisInput);
+
+            // Y axis for a Vector2 translates to Z axis for Vector3
+            this.transform.position += new Vector3(xAxisInput, 0f, yAxisInput) * _speed * Time.deltaTime;
+        }
     }
 
-    public void Move(InputAction.CallbackContext context) => movementInput = context.ReadValue<Vector2>();
+    public void Move(InputAction.CallbackContext context) => _movementInput = context.ReadValue<Vector2>();
 
-    public void Fire(InputAction.CallbackContext context) {
-        
-    }
+    public void Fire(InputAction.CallbackContext context) => _fireInput = context.performed;
 }
