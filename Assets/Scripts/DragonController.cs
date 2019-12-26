@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Animations;
 using UnityEngine;
@@ -12,6 +13,9 @@ public class DragonController : MonoBehaviour
     [SerializeField]
     private GameObject _dragon;
 
+    [SerializeField]
+    public Border _border;
+
     private Animator _animator;
     private Vector2 _movementInput;
     private bool _fireInput;
@@ -19,11 +23,10 @@ public class DragonController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if (_dragon == null) throw new MissingComponentException("Dragon component not assigned to DragonController.cs");
+        if (_border == null) throw new MissingComponentException("Border script must be assigned to DragonController.cs");
+
         _animator = _dragon.gameObject.GetComponent<Animator>();
-        foreach (var param in _animator.parameters)
-        {
-            Debug.Log(param.name + " :: " + param.type + " :: " + param.nameHash);
-        }
         _animator.SetBool("Fly Idle", true);
         _animator.SetBool("Fly Forward", true);
     }
@@ -36,15 +39,22 @@ public class DragonController : MonoBehaviour
 
         if (xAxisInput != 0 || yAxisInput != 0)
         {
-            Debug.Log("horizontalInput: " + xAxisInput);
-            Debug.Log("verticalInput: " + yAxisInput);
-
             // Y axis for a Vector2 translates to Z axis for Vector3
-            _dragon.transform.position += new Vector3(xAxisInput, 0f, yAxisInput) * _speed * Time.deltaTime;
+            this.transform.position = new Vector3(UpdateXAxisPosition(xAxisInput), this.transform.position.y, UpdateZAxisPosition(yAxisInput));
         }
     }
 
     public void Move(InputAction.CallbackContext context) => _movementInput = context.ReadValue<Vector2>();
 
     public void Fire(InputAction.CallbackContext context) => _fireInput = context.performed;
+
+    private float UpdateXAxisPosition(float xAxisInput)
+    {
+        return Mathf.Clamp(this.transform.position.x + xAxisInput * _speed * Time.deltaTime, _border.xMin, _border.xMax);
+    }
+
+    private float UpdateZAxisPosition(float yAxisInput)
+    {
+        return Mathf.Clamp(this.transform.position.z + yAxisInput * _speed * Time.deltaTime, _border.zMin, _border.zMax);
+    }
 }
