@@ -9,6 +9,8 @@ public class Shooter : MonoBehaviour
     public ProjectileType SelectedProjectile = ProjectileType.CANDY_CANE;
 
     public int CandyCaneCount;
+    public float CandyCaneCooldown = 1.0f;
+    private float _candyCaneCooldownRemaining = 0.0f;
     private int CandyCaneIndex = 0;
     [SerializeField]
     private GameObject CandyCanePrefab;
@@ -31,7 +33,11 @@ public class Shooter : MonoBehaviour
 
     void Update()
     {
-        if (_fireInput && SelectedProjectile == ProjectileType.CANDY_CANE)
+        if (_candyCaneCooldownRemaining > 0) {
+            _candyCaneCooldownRemaining = Mathf.Clamp(_candyCaneCooldownRemaining - Time.deltaTime, 0.0f, CandyCaneCooldown);
+        }
+
+        if (_fireInput && _candyCaneCooldownRemaining == 0 && SelectedProjectile == ProjectileType.CANDY_CANE)
         {
             var candyCane = CandyCanes[CandyCaneIndex];
             var (position, rotation) = GetSpawnPosition();
@@ -49,6 +55,7 @@ public class Shooter : MonoBehaviour
                 CandyCaneIndex = 0;
             }
             _fireInput = false;
+            _candyCaneCooldownRemaining = CandyCaneCooldown;
         }
     }
 
