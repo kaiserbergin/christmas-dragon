@@ -15,12 +15,12 @@ public class AsetroidManager : MonoBehaviour
 {
     public Collider SpawnCollider;
 
-    public List<GameObject> AsteroidPrefabs;
+    public List<Asteroid> AsteroidPrefabs;
 
-    private List<GameObject> _asteroids;
-    private int _asteroidIndex;
+    private List<Asteroid> _asteroids;
+    private int _asteroidIndex = 0;
 
-    public List<float> SizeDistribution = new List<float> { .75f, .875f, 95f, 100f };
+    public List<float> SizeDistribution = new List<float> { .75f, .875f, .95f, 1f };
 
     public int SpawnRate = 3;
 
@@ -44,25 +44,27 @@ public class AsetroidManager : MonoBehaviour
     public float CurrentSpawnDuration = 0f;
     public List<float> SpawnTimes = new List<float>();
 
+    public int CurrentWave = 0;
+
     // Start is called before the first frame update
     void Start()
     {
-        var asteroids = new List<GameObject>();
+        _asteroids = new List<Asteroid>();
 
         foreach (var asteroid in AsteroidPrefabs)
         {
             for (int i = 0; i < 5; i++) 
             {
-                asteroids.Add(asteroid);
+                _asteroids.Add(Instantiate(asteroid));
             }
         }
 
-        for (int i = 0; i < asteroids.Count; i++) 
+        for (int i = 0; i < _asteroids.Count; i++) 
         {
-            var temp = asteroids[i];
-            int randomIndex = UnityEngine.Random.Range(i, asteroids.Count);
-            asteroids[i] = asteroids[randomIndex];
-            asteroids[randomIndex] = temp;
+            var temp = _asteroids[i];
+            int randomIndex = UnityEngine.Random.Range(i, _asteroids.Count - 1);
+            _asteroids[i] = _asteroids[randomIndex];
+            _asteroids[randomIndex] = temp;
         }
 
         BeginNewWave();
@@ -73,7 +75,7 @@ public class AsetroidManager : MonoBehaviour
     {
         CurrentSpawnDuration += Time.deltaTime;
 
-        if (CurrentSpawnDuration >= SpawnDuration)
+        if (CurrentSpawnDuration >= SpawnDuration && _asteroids.TrueForAll(x => x.gameObject.activeSelf == false))
         {
             BeginNewWave();
         }
@@ -89,7 +91,8 @@ public class AsetroidManager : MonoBehaviour
         for (int i = 0; i < SpawnRate; i++) {
             SpawnTimes.Add(UnityEngine.Random.value * SpawnRate);
             CurrentSpawnDuration = 0f;
-        }        
+        }   
+        CurrentWave++;     
     }
 
     private void ContinueWave()
@@ -98,9 +101,79 @@ public class AsetroidManager : MonoBehaviour
         {
             if (SpawnTimes[i] <= CurrentSpawnDuration)
             {
-                Debug.Log("Spawn an asteroid");
+                SpawnAsteroid();
             }
         }
         SpawnTimes.RemoveAll(x => x <= CurrentSpawnDuration);
+    }
+
+    private void SpawnAsteroid()
+    {
+        var normal = UnityEngine.Random.value;        
+        var typeIndex = SizeDistribution.FindIndex(x => x >= normal);
+        var type = (AsetroidType)typeIndex;
+        var asteroid = _asteroids[_asteroidIndex];
+
+        SpawnAsteroid(type, asteroid);
+    }
+
+    private void SpawnAsteroid(AsetroidType type, Asteroid asteroid)
+    {
+        asteroid.transform.position = GetSpawnPoint();
+        
+        ActivateAsteroid(type, asteroid);
+
+        if (_asteroidIndex < _asteroids.Count - 1)
+            _asteroidIndex++;
+        else
+            _asteroidIndex = 0;
+    }
+
+    private void ActivateAsteroid(AsetroidType type, Asteroid asteroid)
+    {
+        int health = 1;
+        float speed = 0f;
+        float size = 0f;
+
+        switch (type)
+        {
+            case AsetroidType.SMALL:
+                health = SmallAsteroidHealth;
+                size = UnityEngine.Random.Range(SmallAsteroidSizeRange[0], SmallAsteroidSizeRange[1]);
+                speed = UnityEngine.Random.Range(SmallAsteroidSpeedRange[0], SmallAsteroidSpeedRange[1]);
+                break;
+            case AsetroidType.MEDIUM:
+                health = MediumAsteroidHealth;
+                size = UnityEngine.Random.Range(MediumAsteroidSizeRange[0], MediumAsteroidSizeRange[1]);
+                speed = UnityEngine.Random.Range(MediumAsteroidSpeedRange[0], MediumAsteroidSpeedRange[1]);
+                break;
+            case AsetroidType.LARGE:
+                health = LargeAsteroidHealth;
+                size = UnityEngine.Random.Range(LargeAsteroidSizeRange[0], LargeAsteroidSizeRange[1]);
+                speed = UnityEngine.Random.Range(LargeAsteroidSpeedRange[0], LargeAsteroidSpeedRange[1]);
+                break;
+            case AsetroidType.MEGA:
+                health = MegaAsteroidHealth;
+                size = UnityEngine.Random.Range(MegaAsteroidSizeRange[0], MegaAsteroidSizeRange[1]);
+                speed = UnityEngine.Random.Range(MegaAsteroidSpeedRange[0], MegaAsteroidSpeedRange[1]);
+                break;
+        }
+
+        asteroid.Type = type;
+        asteroid.Health = health;
+        asteroid.transform.localScale = new Vector3(size, size, size);
+        
+        asteroid.gameObject.SetActive(true);
+
+        asteroid.Rigidbody.velocity = asteroid.transform.forward * speed * -1;
+    }
+
+    private Vector3 GetSpawnPoint()
+    {
+        Vector3 p;
+        p.x = UnityEngine.Random.Range(this.transform.localScale.x * -1, this.transform.localScale.x) * 0.5f;
+        p.y = 0f;
+        p.z = UnityEngine.Random.Range(this.transform.localScale.z * -1, this.transform.localScale.z) * 0.5f;
+        return transform.TransformPoint(p);
     }
 }
