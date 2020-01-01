@@ -13,6 +13,8 @@ public class AsetroidManager : MonoBehaviour
 {
     public Collider SpawnCollider;
 
+    public GameManager GameManager;
+
     public UIManager UIManager;
 
     public List<Asteroid> AsteroidPrefabs;
@@ -47,6 +49,9 @@ public class AsetroidManager : MonoBehaviour
     public List<float> SpawnTimes = new List<float>();
 
     public int CurrentWave = 0;
+    public int MaxWave = 50;
+
+
 
     // Start is called before the first frame update
     void Start()
@@ -99,6 +104,11 @@ public class AsetroidManager : MonoBehaviour
 
         CurrentSpawnDuration = 0f;
         CurrentWave++;
+
+        if (CurrentWave > MaxWave)
+        {
+            GameManager.WinGame();
+        }
 
         SetSpawnRate();
 

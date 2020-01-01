@@ -10,6 +10,12 @@ public class UIManager : MonoBehaviour
     public TMP_Text ScoreText;
     private string _scoreString;
 
+    public GameObject PregameUI;
+    public GameObject InGameUI;
+
+    public RectTransform RectTransform;
+    public GameManager GameManager;
+
     private int score = 0;
 
     void Start()
@@ -20,6 +26,11 @@ public class UIManager : MonoBehaviour
 
     void Update()
     {
+        if (PregameUI.activeInHierarchy && RectTransform.localPosition.y >= 1900)
+        {
+            GameManager.StartGame();
+        }
+
         if (WaveText != null && WaveText.text != _waveString)
         {
             WaveText.text = _waveString;

@@ -56,6 +56,10 @@ public class Asteroid : MonoBehaviour
             }
             UIManager.IncrimentScore(inc);
         }
+        else if (other.TryGetComponent(out DragonController player))
+        {
+            player.Kill();
+        }
     }
 
 }

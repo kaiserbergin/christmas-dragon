@@ -20,6 +20,12 @@ public class DragonController : MonoBehaviour
     private Vector2 _movementInput;
     private bool _fireInput;
 
+
+    public bool isDead = false;
+    public float deathDuration = 5.0f;
+    public float currentDeathDuration = 0f;
+    public GameManager GameManager;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -42,9 +48,32 @@ public class DragonController : MonoBehaviour
             // Y axis for a Vector2 translates to Z axis for Vector3
             this.transform.position = new Vector3(UpdateXAxisPosition(xAxisInput), this.transform.position.y, UpdateZAxisPosition(yAxisInput));
         }
+        if (isDead)
+        {
+            if (_animator.GetBool("Fly Idle") == true)
+            {
+                _animator.SetBool("Fly Die", true);
+            }
+            if (_animator.GetBool("Fly Forward") == true)
+            {
+                _animator.SetBool("Fly Idle", true);
+            }
+
+
+            currentDeathDuration += Time.deltaTime;
+        }
+        if (currentDeathDuration >= deathDuration)
+        {
+            GameManager.LoseGame();
+        }
     }
 
     public void Move(InputAction.CallbackContext context) => _movementInput = context.ReadValue<Vector2>();
+
+    internal void Kill()
+    {
+        GameManager.LoseGame();
+    }
 
     public void Fire(InputAction.CallbackContext context) => _fireInput = context.performed;
 
