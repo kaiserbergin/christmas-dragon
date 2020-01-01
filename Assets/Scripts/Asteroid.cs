@@ -7,12 +7,13 @@ public class Asteroid : MonoBehaviour
     public int Health = 1;
     public Rigidbody Rigidbody;
 
-    void Awake() 
+    void Awake()
     {
         Rigidbody = this.gameObject.GetComponent<Rigidbody>();
     }
 
-    public void DoDamage(int damage) {
+    public void DoDamage(int damage)
+    {
         Health -= damage;
         if (Health <= 0)
             DestroyAsteroid();
@@ -20,6 +21,16 @@ public class Asteroid : MonoBehaviour
 
     private void DestroyAsteroid()
     {
-        Debug.Log("shoulda destroyed");
+        this.gameObject.SetActive(false);
     }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.TryGetComponent(out Projectile projectile))
+        {
+            DoDamage(projectile.DamageValue);
+            projectile.Kill();
+        }
+    }
+
 }

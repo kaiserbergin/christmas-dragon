@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public enum ProjectileType
 {
@@ -9,15 +7,17 @@ public enum ProjectileType
 public class Projectile : MonoBehaviour
 {
     public ProjectileType projectileType;
+    public int DamageValue = 1;
+
+    public GameObject DestroyEffect;
     // Start is called before the first frame update
-    void Start()
+    public void Kill()
     {
+        if (DestroyEffect != null)
+        {
+            Instantiate(DestroyEffect, this.transform.position, Quaternion.identity);
+        }
 
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
+        this.gameObject.SetActive(false);
     }
 }

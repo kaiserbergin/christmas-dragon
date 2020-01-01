@@ -145,5 +145,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   projectileType: 0
-  fowardSpeed: 30
+  fowardSpeed: 35
   rotationSpeed: 15

@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CandyCane : Projectile
 {
@@ -14,11 +12,5 @@ public class CandyCane : Projectile
         _rigidbody = this.gameObject.GetComponent<Rigidbody>();
         _rigidbody.velocity = _rigidbody.transform.up * fowardSpeed;
         _rigidbody.angularVelocity = _rigidbody.transform.up * rotationSpeed;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 }
