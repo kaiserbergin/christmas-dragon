@@ -53,11 +53,13 @@ public class AsetroidManager : MonoBehaviour
     {
         _asteroids = new List<Asteroid>();
 
-        foreach (var asteroid in AsteroidPrefabs)
+        foreach (var prefab in AsteroidPrefabs)
         {
             for (int i = 0; i < 100; i++)
             {
-                _asteroids.Add(Instantiate(asteroid));
+                var asteroid = Instantiate(prefab);
+                asteroid.UIManager = UIManager;
+                _asteroids.Add((Asteroid)asteroid);
             }
         }
 
@@ -98,6 +100,33 @@ public class AsetroidManager : MonoBehaviour
         CurrentSpawnDuration = 0f;
         CurrentWave++;
 
+        SetSpawnRate();
+
+        UIManager.SetWave(CurrentWave);
+    }
+
+    private void SetSpawnDuration()
+    {
+        if (CurrentWave == 10)
+        {
+            SpawnDuration += 1f;
+        }
+        else if (CurrentWave == 20)
+        {
+            SpawnDuration += 2f;
+        }
+        else if (CurrentWave == 30)
+        {
+            SpawnDuration += 5f;
+        }
+        else if (CurrentWave == 40)
+        {
+            SpawnDuration += 10f;
+        }
+    }
+
+    private void SetSpawnRate()
+    {
         if (CurrentWave > 2)
         {
             SpawnRate += 2;
@@ -118,8 +147,6 @@ public class AsetroidManager : MonoBehaviour
         {
             SpawnRate += 10;
         }
-
-        UIManager.SetWave(CurrentWave);
     }
 
     private void ContinueWave()

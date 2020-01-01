@@ -7,6 +7,10 @@ public class Asteroid : MonoBehaviour
     public int Health = 1;
     public Rigidbody Rigidbody;
 
+    public GameObject Explosion;
+
+    public UIManager UIManager;
+
     void Awake()
     {
         Rigidbody = this.gameObject.GetComponent<Rigidbody>();
@@ -16,7 +20,10 @@ public class Asteroid : MonoBehaviour
     {
         Health -= damage;
         if (Health <= 0)
+        {
+            Instantiate(Explosion, this.transform.position, Quaternion.identity);
             DestroyAsteroid();
+        }
     }
 
     private void DestroyAsteroid()
@@ -30,6 +37,24 @@ public class Asteroid : MonoBehaviour
         {
             DoDamage(projectile.DamageValue);
             projectile.Kill();
+
+            int inc = 0;
+            switch (Type)
+            {
+                case AsetroidType.SMALL:
+                    inc = 10;
+                    break;
+                case AsetroidType.MEDIUM:
+                    inc = 25;
+                    break;
+                case AsetroidType.LARGE:
+                    inc = 50;
+                    break;
+                case AsetroidType.MEGA:
+                    inc = 100;
+                    break;
+            }
+            UIManager.IncrimentScore(inc);
         }
     }
 
