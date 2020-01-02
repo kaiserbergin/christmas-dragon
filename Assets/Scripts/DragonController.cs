@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Animations;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class DragonController : MonoBehaviour
@@ -25,6 +21,7 @@ public class DragonController : MonoBehaviour
     public float deathDuration = 1.0f;
     public float currentDeathDuration = 0f;
     public GameManager GameManager;
+    public SoundManager SoundManager;
 
     // Start is called before the first frame update
     void Start()
@@ -81,6 +78,7 @@ public class DragonController : MonoBehaviour
         if (!isDead)
         {
             isDead = true;
+            SoundManager.PlayDeath();
         }
     }
 

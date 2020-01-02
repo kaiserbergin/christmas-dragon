@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour
         {
             Game.SetActive(true);
             UIManager.PregameUI.SetActive(false);
+            UIManager.InGameUI.SetActive(true);
             GameState = GameState.INGAME;
         }
         else if (GameState == GameState.POSTGAME)

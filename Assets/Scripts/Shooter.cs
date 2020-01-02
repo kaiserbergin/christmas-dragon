@@ -20,6 +20,8 @@ public class Shooter : MonoBehaviour
 
     public DragonController DragonController;
 
+    public SoundManager SoundManager;
+
     private bool _fireInput;
 
     void Start()
@@ -59,6 +61,8 @@ public class Shooter : MonoBehaviour
             }
             _fireInput = false;
             _candyCaneCooldownRemaining = CandyCaneCooldown;
+
+            SoundManager.PlayLazer();
         }
     }
 

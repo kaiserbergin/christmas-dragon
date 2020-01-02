@@ -16,6 +16,7 @@ public class AsetroidManager : MonoBehaviour
     public GameManager GameManager;
 
     public UIManager UIManager;
+    public SoundManager SoundManager;
 
     public List<Asteroid> AsteroidPrefabs;
 
@@ -64,6 +65,7 @@ public class AsetroidManager : MonoBehaviour
             {
                 var asteroid = Instantiate(prefab);
                 asteroid.UIManager = UIManager;
+                asteroid.SoundManager = SoundManager;
                 _asteroids.Add((Asteroid)asteroid);
             }
         }
@@ -109,10 +111,13 @@ public class AsetroidManager : MonoBehaviour
         {
             GameManager.WinGame();
         }
+        else
+        {
+            SetSpawnRate();
 
-        SetSpawnRate();
-
-        UIManager.SetWave(CurrentWave);
+            UIManager.SetWave(CurrentWave);
+            SoundManager.PlayWave();
+        }
     }
 
     private void SetSpawnDuration()

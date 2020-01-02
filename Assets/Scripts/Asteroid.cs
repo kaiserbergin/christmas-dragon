@@ -11,6 +11,8 @@ public class Asteroid : MonoBehaviour
 
     public UIManager UIManager;
 
+    public SoundManager SoundManager;
+
     void Awake()
     {
         Rigidbody = this.gameObject.GetComponent<Rigidbody>();
@@ -19,9 +21,11 @@ public class Asteroid : MonoBehaviour
     public void DoDamage(int damage)
     {
         Health -= damage;
+        SoundManager.PlayImpact();
         if (Health <= 0)
         {
             Instantiate(Explosion, this.transform.position, Quaternion.identity);
+            SoundManager.PlayExplosion();
             DestroyAsteroid();
         }
     }

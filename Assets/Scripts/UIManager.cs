@@ -26,7 +26,8 @@ public class UIManager : MonoBehaviour
 
     void Update()
     {
-        if (PregameUI.activeInHierarchy && RectTransform.localPosition.y >= 1900)
+        var time = Time.time;
+        if (Time.time >= 85)
         {
             GameManager.StartGame();
         }
