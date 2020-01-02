@@ -18,6 +18,8 @@ public class Shooter : MonoBehaviour
     private GameObject CandyCaneSpawnPoint;
     private List<GameObject> CandyCanes = new List<GameObject>();
 
+    public DragonController DragonController;
+
     private bool _fireInput;
 
     void Start()
@@ -33,11 +35,12 @@ public class Shooter : MonoBehaviour
 
     void Update()
     {
-        if (_candyCaneCooldownRemaining > 0) {
+        if (_candyCaneCooldownRemaining > 0)
+        {
             _candyCaneCooldownRemaining = Mathf.Clamp(_candyCaneCooldownRemaining - Time.deltaTime, 0.0f, CandyCaneCooldown);
         }
 
-        if (_fireInput && _candyCaneCooldownRemaining == 0 && SelectedProjectile == ProjectileType.CANDY_CANE)
+        if (!DragonController.isDead && _fireInput && _candyCaneCooldownRemaining == 0 && SelectedProjectile == ProjectileType.CANDY_CANE)
         {
             var candyCane = CandyCanes[CandyCaneIndex];
             var (position, rotation) = GetSpawnPosition();

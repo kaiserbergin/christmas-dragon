@@ -22,7 +22,7 @@ public class DragonController : MonoBehaviour
 
 
     public bool isDead = false;
-    public float deathDuration = 5.0f;
+    public float deathDuration = 1.0f;
     public float currentDeathDuration = 0f;
     public GameManager GameManager;
 
@@ -40,31 +40,37 @@ public class DragonController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float xAxisInput = _movementInput.x;
-        float yAxisInput = _movementInput.y;
-
-        if (xAxisInput != 0 || yAxisInput != 0)
-        {
-            // Y axis for a Vector2 translates to Z axis for Vector3
-            this.transform.position = new Vector3(UpdateXAxisPosition(xAxisInput), this.transform.position.y, UpdateZAxisPosition(yAxisInput));
-        }
         if (isDead)
         {
-            if (_animator.GetBool("Fly Idle") == true)
+            if (_animator.GetBool("Fly Forward"))
             {
+                _animator.SetBool("Fly Forward", false);
+                _animator.SetBool("Fly Idle", true);
                 _animator.SetBool("Fly Die", true);
             }
-            if (_animator.GetBool("Fly Forward") == true)
+
+            foreach (var param in _animator.parameters)
             {
-                _animator.SetBool("Fly Idle", true);
+                Debug.Log(param.name + ": " + _animator.GetBool(param.name));
             }
 
-
             currentDeathDuration += Time.deltaTime;
+
+            if (currentDeathDuration >= deathDuration)
+            {
+                GameManager.LoseGame();
+            }
         }
-        if (currentDeathDuration >= deathDuration)
+        else
         {
-            GameManager.LoseGame();
+            float xAxisInput = _movementInput.x;
+            float yAxisInput = _movementInput.y;
+
+            if (xAxisInput != 0 || yAxisInput != 0)
+            {
+                // Y axis for a Vector2 translates to Z axis for Vector3
+                this.transform.position = new Vector3(UpdateXAxisPosition(xAxisInput), this.transform.position.y, UpdateZAxisPosition(yAxisInput));
+            }
         }
     }
 
@@ -72,7 +78,10 @@ public class DragonController : MonoBehaviour
 
     internal void Kill()
     {
-        GameManager.LoseGame();
+        if (!isDead)
+        {
+            isDead = true;
+        }
     }
 
     public void Fire(InputAction.CallbackContext context) => _fireInput = context.performed;
